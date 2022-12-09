@@ -29,6 +29,20 @@ if TYPE_CHECKING:
 
 ADJACENT_4 = ((-1, 0), (1, 0), (0, -1), (0, 1))
 ADJACENT_8 = ((-1, 0), (1, 0), (0, -1), (0, 1), (-1, -1), (-1, 1), (1, -1), (1, 1))
+DIRECTIONS = {
+    "N": (0, 1),
+    "S": (0, -1),
+    "E": (1, 0),
+    "W": (-1, 0),
+    "NE": (1, 1),
+    "NW": (-1, 1),
+    "SE": (1, -1),
+    "SW": (-1, -1),
+    "U": (0, 1),
+    "D": (0, -1),
+    "R": (1, 0),
+    "L": (-1, 0),
+}
 
 _CURRENT_YEAR = 2022
 _COOKIE_PATH = "cookie.txt"
@@ -800,7 +814,7 @@ class Grid(Generic[T]):
     def transpose(self) -> None:
         """Transposes the grid."""
         self.grid = transpose_grid(self.grid)
-    
+
     def transposed(self) -> Grid[T]:
         """Returns a transposed copy of the grid."""
         return Grid(transpose_grid(self.grid))
