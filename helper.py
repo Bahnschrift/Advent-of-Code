@@ -85,7 +85,7 @@ def print_part_2(ans: Any) -> None:
 # +----------------------------------------------------------------------------+
 
 
-def _get_session_cookie() -> str | None:
+def _get_session_cookie() -> str:
     """Get the session cookie from the cookie file.
 
     :returns: The session cookie.
@@ -95,7 +95,7 @@ def _get_session_cookie() -> str | None:
             return f.read().strip()
     except FileNotFoundError:
         _update_session_cookie()
-        _get_session_cookie()
+        return _get_session_cookie()
 
 
 def _update_session_cookie() -> None:
@@ -1079,9 +1079,10 @@ def _download_input(day: int, year: int, path: str) -> None:
     :param year: the year of the AoC challenge (default: CURRENT_YEAR)
     :param path: the path to the folder containing the input file (default: "../inputs/")
     """
-    headers = {"session": _get_session_cookie()}
+    cookies = {"session": _get_session_cookie()}
+    headers = {"User-Agent": "Bahnschrift's Advent of Code Helper - https://github.com/Bahnschrift/Advent-of-Code"}
     url = f"https://adventofcode.com/{year}/day/{day}/input"
-    request = requests.post(url, cookies=headers)
+    request = requests.post(url, cookies=cookies, headers=headers)
     text = request.text
     request.close()
 
