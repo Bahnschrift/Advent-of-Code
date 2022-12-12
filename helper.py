@@ -766,24 +766,23 @@ class Grid(Generic[T]):
 
     def get_pos(self, item: Any) -> tuple[int, int]:
         """Returns the first found position of the given item in the grid in the format (x, y)."""
-        for y, row in enumerate(self.grid):
-            for x, col in enumerate(row):
-                if col == item:
-                    return y, x
+        for x, y in self.positions():
+            if self[x, y] == item:
+                return x, y
+
         raise ValueError(f"{item} is not in grid.")
 
-    def replace(self, old: Any, new: Any, count: int = None) -> None:
+    def replace(self, old: Any, new: Any, count: int | None = None) -> None:
         """Replaces all instances of the old item with the new item."""
         count = count or len(self)
-        for y, row in enumerate(self.grid):
-            for x, col in enumerate(row):
-                if col == old:
-                    self[x, y] = new
-                    count -= 1
-                    if count == 0:
-                        return
+        for x, y in self.positions():
+            if self[x, y] == old:
+                self[x, y] = new
+                count -= 1
+                if count == 0:
+                    return
 
-    def replaced(self, old: Any, new: Any, count: int = None) -> Grid:
+    def replaced(self, old: Any, new: Any, count: int | None = None) -> Grid:
         """Returns a copy of the grid with all instances of the old item replaced with the new item."""
         grid = self.copy()
         grid.replace(old, new, count)
@@ -797,11 +796,9 @@ class Grid(Generic[T]):
         """Finds the item of the largest value in the grid."""
         return max(self.items(), key=key)
 
-    # return max((max(row, key=key) for row in self.grid), key=key)
-
     def min(self, key: Callable[[T], SupportsLessThan] = None):
         """Finds the item of the smallest value in the grid."""
-        return min((min(row, key=key) for row in self.grid), key=key)
+        return min(self.items(), key=key)
 
     def rotate(self, n: int = 1) -> None:
         """Rotates the grid n times."""
