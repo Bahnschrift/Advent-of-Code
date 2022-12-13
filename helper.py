@@ -803,6 +803,7 @@ class Grid(Generic[T]):
     def rotate(self, n: int = 1) -> None:
         """Rotates the grid n times."""
         self.grid = rotate_grid(self.grid, n)
+        self.width, self.height = self.height, self.width
 
     def rotated(self, n: int = 1) -> Grid[T]:
         """Returns a rotated copy of the grid."""
