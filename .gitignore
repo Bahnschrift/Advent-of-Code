@@ -1,3 +1,9 @@
+# Executables
+*
+!*.*
+!*/
+*.exe
+
 .vscode/
 venv*/
 bin/
