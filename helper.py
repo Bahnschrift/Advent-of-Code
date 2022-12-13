@@ -1093,7 +1093,7 @@ def _download_input(day: int, year: int, path: str) -> None:
     else:
         print("[bold green]Input download successful.")
 
-    with open(f"{path}/day{day}.txt", "w+") as f:
+    with open(f"{path}/day{day:02d}.txt", "w+") as f:
         f.write(text)
 
 
@@ -1104,7 +1104,7 @@ def _ensure_input_file(day: int, year: int, path: str) -> None:
     :param year: the year of the AoC challenge (default: CURRENT_YEAR)
     :param path: the path to the folder containing the input file (default: "../inputs/")
     """
-    if f"day{day}.txt" not in os.listdir(path) or open(f"{path}/day{day}.txt", "r").read() == "":
+    if f"day{day:02d}.txt" not in os.listdir(path) or open(f"{path}/day{day:02d}.txt", "r").read() == "":
         print(f"[italic]Downloading input for day {day}...")
         _download_input(day, year, path)
 
@@ -1121,7 +1121,7 @@ def get_input(day: int, year: int = _CURRENT_YEAR, path: str | None = None) -> s
         path = os.path.join(os.path.dirname(__file__), f"{year}/inputs")
 
     _ensure_input_file(day, year, path)
-    with open(f"{path}/day{day}.txt", "r") as f:
+    with open(f"{path}/day{day:02d}.txt", "r") as f:
         inp = f.read().rstrip("\n")
     return inp
 
