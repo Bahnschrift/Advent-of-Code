@@ -1,7 +1,9 @@
+from typing import Callable, TypeVar
+
 import requests
 from rich import print
+
 from .grid import Grid
-from typing import TypeVar, Callable
 
 _COOKIE_PATH = "cookie.txt"
 _USER_AGENT = "Bahnschrift's Advent of Code Helper - https://github.com/Bahnschrift/Advent-of-Code"

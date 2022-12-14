@@ -1,6 +1,8 @@
 from __future__ import annotations
+
+from typing import TYPE_CHECKING, Any, Callable, Generic, Iterator, Sequence, TypeVar, overload
+
 from .constants import *
-from typing import TYPE_CHECKING, Generic, TypeVar, Sequence, overload, Sequence, Iterator, Any, Callable
 
 if TYPE_CHECKING:
     from _typeshed import SupportsRichComparison
@@ -546,6 +548,33 @@ class Grid(Generic[_T]):
         """Returns the column at the given x position."""
         return self[x, :]
 
+    def pretty(self) -> str:
+        """Returns a pretty string representation of the grid in the following format:
+        ```text
+           | 0  1  2  3  4
+        ---+----------------
+         0 |  1  2  3  4  5
+         1 |  6  7  8  9 10
+         3 | 11 12 13 14 15
+         4 | 16 17 18 19 20
+        ```
+        """
+        y_axis_width = len(str(self.height - 1))
+        s = " " * (y_axis_width + 2) + "| "
+
+        column_widths = [max(*(len(str(i)) for i in self.col(x)), len(str(x))) for x in range(self.width)]
+        s += " ".join(f"{i:>{width}}" for i, width in enumerate(column_widths))
+        s += "\n"
+
+        s += "-" * (y_axis_width + 2) + "+-" + "-".join("-" * width for width in column_widths) + "\n"
+
+        for y in range(self.height):
+            s += f" {y:>{y_axis_width}} | "
+            s += " ".join(f"{i:>{width}}" for i, width in zip(self.row(y), column_widths))
+            s += "\n"
+
+        return s
+
     def in_bounds(self, x: int, y: int) -> bool:
         """Returns whether the given position is in the grid."""
         return 0 <= x < self.width and 0 <= y < self.height
@@ -713,13 +742,21 @@ class Grid(Generic[_T]):
         """Returns the number of occurrences of the given value."""
         return sum(v == value for v in self.values())
 
-    def max(self, key: Callable[[_T], SupportsRichComparison] | None = None) -> _T:
+    def max_value(self, key: Callable[[_T], SupportsRichComparison] | None = None) -> _T:
         """Returns the maximum value in the grid."""
         return max(self.values(), key=key)  # type: ignore
 
-    def min(self, key: Callable[[_T], SupportsRichComparison] | None = None) -> _T:
+    def max_position(self, key: Callable[[_T], SupportsRichComparison] | None = None) -> tuple[int, int]:
+        """Returns the position of the maximum value in the grid."""
+        return self.get_pos(self.max_value(key))
+
+    def min_value(self, key: Callable[[_T], SupportsRichComparison] | None = None) -> _T:
         """Returns the minimum value in the grid."""
         return min(self.values(), key=key)  # type: ignore
+
+    def min_position(self, key: Callable[[_T], SupportsRichComparison] | None = None) -> tuple[int, int]:
+        """Returns the position of the minimum value in the grid."""
+        return self.get_pos(self.min_value(key))
 
     def transposed(self) -> Grid[_T]:
         """Returns a transposed copy of the grid."""
@@ -845,9 +882,9 @@ def _test_grid():
     assert test_grid.get_pos(9) == (2, 3)
 
     assert test_grid.count(9) == 1
-    assert test_grid.max() == 14
-    assert test_grid.max(key=lambda v: -v + 3) == 1
-    assert test_grid.min() == 1
+    assert test_grid.max_value() == 14
+    assert test_grid.max_value(key=lambda v: -v + 3) == 1
+    assert test_grid.min_value() == 1
 
     test_grid = create_test_grid()
     test_grid.rotate()
@@ -858,7 +895,11 @@ def _test_grid():
 
     assert create_test_grid().transposed() in create_test_grid().permutations()
 
+    test_grid = Grid([[1, 2, 3], [4, 5, 6], [7, 8, 9], ["a", "b", "c"]])
 
-if __name__ == "__main__":
-    _test_grid()
-    print("Tests passed!")
+    # test_grid = create_test_grid()
+    # test_grid.insert_col(1, [12, 13, 14])
+    # test_grid.append_row([150, 16, 17, 18])
+    print(test_grid.pretty())
+    # print(Grid(test_grid.pretty().splitlines()).pretty())
+    # print(Grid(test_grid[2:, 1:]).pretty())

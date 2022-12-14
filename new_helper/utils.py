@@ -1,8 +1,16 @@
 from __future__ import annotations
-import re
+
 import math
-from typing import TypeVar, Any
+import re
+from typing import TYPE_CHECKING, Any, Iterable, TypeVar
+
 from rich import print
+
+if TYPE_CHECKING:
+    from _typeshed import SupportsRichComparison
+
+    _C = TypeVar("_C", bound=SupportsRichComparison)
+
 
 _T = TypeVar("_T")
 
@@ -79,6 +87,14 @@ def sign(n: int) -> int:
     :param n: the number to get the sign of
     :return: the sign of the given number"""
     return (n > 0) - (n < 0)
+
+
+def minmax(l: Iterable[_C]) -> tuple:
+    """Returns the minimum and maximum values in the given iterable.
+
+    :param l: the iterable to get the minimum and maximum values of
+    :return: the minimum and maximum values in the given iterable"""
+    return min(l), max(l)
 
 
 def _print_part(n: int, ans: Any) -> None:
