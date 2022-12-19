@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from itertools import product, permutations
-from typing import TYPE_CHECKING, Callable, Generic, Iterable, Iterator, TypeVar
+from typing import TYPE_CHECKING, Callable, Generic, Iterable, Iterator, TypeVar, overload
 
 from .grid import Grid
 from .utils import minmax
@@ -65,14 +65,62 @@ class InfiniteGrid(Generic[_T]):
 
             self._items[pos] = value
 
+    @overload
     def __getitem__(self, key: tuple[int, ...]) -> _T:
-        return self._items[key]
+        ...
 
+    @overload
+    def __getitem__(self, key: tuple[tuple[int, ...], tuple[int, ...]]) -> list:
+        ...
+
+    def __getitem__(self, key: tuple[int, ...] | tuple[tuple[int, ...], tuple[int, ...]]) -> _T | list:
+        if len(key) >= 1 and all(isinstance(x, int) for x in key):
+            return self._items[key]  # type: ignore
+
+        else:  # TODO: generalize to n dimensions
+            assert len(key) == 2
+            assert isinstance(key[0], tuple)
+            assert isinstance(key[1], tuple)
+
+            lower: tuple[int, ...] = key[0]
+            upper: tuple[int, ...] = key[1]
+
+            if len(lower) != len(upper) != self.dimension():
+                raise ValueError("position must be of the same dimension as the grid")
+            
+            if len(lower) == 1:
+                return [self[x, ] for x in range(lower[0], upper[0] + 1)]
+            
+            elif len(lower) == 2:
+                return [[self[x, y] for x in range(lower[0], upper[0] + 1)] for y in range(lower[1], upper[1] + 1)]
+            
+            elif len(lower) == 3:
+                return [[[self[x, y, z] for x in range(lower[0], upper[0] + 1)] for y in range(lower[1], upper[1] + 1)] for z in range(lower[2], upper[2] + 1)]
+            
+            else:
+                raise NotImplementedError("cannot get a grid with more than 3 dimensions")
+
+    @overload
     def __setitem__(self, key: tuple[int, ...], value: _T):
-        if self.dimension() > 0 and len(key) != self.dimension():
-            raise TypeError("position must be of the same dimension as the grid")
+        ...
 
-        self._items[key] = value
+    @overload
+    def __setitem__(self, key: tuple[int, ...], value: Grid[_T]):
+        ...
+
+    def __setitem__(self, key: tuple[int, ...], value: _T | Grid[_T]):
+        if self.dimension() > 0 and len(key) != self.dimension():
+            raise ValueError("position must be of the same dimension as the grid")
+
+        if isinstance(value, Grid):
+            if self.dimension == 1:
+                raise ValueError("cannot set a grid on a 1D grid")
+
+            for pos, val in value.items():
+                self[tuple(x + y for x, y in zip(key, pos)) + key[2:]] = val
+
+        else:
+            self._items[key] = value
 
     def __delitem__(self, key: tuple[int, ...]):
         del self._items[key]
@@ -96,7 +144,7 @@ class InfiniteGrid(Generic[_T]):
         return len(next(iter(self._items.keys())))
 
     def copy(self):
-        return InfiniteGrid(self._items.items())
+        return InfiniteGrid(self._items.items(), self._items.default_factory)
 
     def set_default(self, default: _T | Callable[[tuple[int, ...]], _T]):
         if callable(default):
@@ -146,14 +194,14 @@ class InfiniteGrid(Generic[_T]):
 
     def _pretty_layer(self, pos: tuple[int, ...] = ()) -> str:
         assert self.dimension() >= 2
-        layer = []
+        layer: list[list[str]] = []
         min_x = min(x[0] for x in self._items.keys() if x[2:] == pos)
         max_x = max(x[0] for x in self._items.keys() if x[2:] == pos)
         min_y = min(x[1] for x in self._items.keys() if x[2:] == pos)
         max_y = max(x[1] for x in self._items.keys() if x[2:] == pos)
 
         for y in range(min_y, max_y + 1):
-            layer.append([self[(x, y) + pos] for x in range(min_x, max_x + 1)])
+            layer.append([str(self[(x, y) + pos]) for x in range(min_x, max_x + 1)])
 
         y_axis_width = max(len(str(max_y)), len(str(min_y)))
         x_axis_height = max(len(str(max_x)), len(str(min_x)))
@@ -311,6 +359,12 @@ def _test_infinite_grid():
 
     # grid[-1, -2] = 10
 
+    grid = InfiniteGrid([((0, 0), "#"), ((1, 0), "#"), ((-1, 0), "#"), ((0, 1), "#"), ((0, -1), "#")], default=" ")
+    # print(grid)
+    print(grid.pretty())
+
+    print(grid[(0, 0), (1, 1)])
+
     # grid = InfiniteGrid(
     #     [
     #         ((0, 0, 0), "#"),
@@ -325,8 +379,8 @@ def _test_infinite_grid():
     #     default=" ",
     # )
 
-    new_grid = InfiniteGrid(list(map(lambda pos: ((pos[0] - 2, pos[1] - 2), grid[pos]), grid.positions())), default=" ")
-    print(new_grid.pretty())
+    # new_grid = InfiniteGrid(list(map(lambda pos: ((pos[0] - 2, pos[1] - 2), grid[pos]), grid.positions())), default=" ")
+    # print(new_grid.pretty())
 
     # assert grid[0, 0, 0] == "#"
     # assert grid.adjacent_orth_values((0, 0, 0)) == ["#", "#", "#", "#", "#", "#"]
