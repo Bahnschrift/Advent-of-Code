@@ -130,6 +130,9 @@ class InfiniteGrid(Generic[_T]):
 
     def __eq__(self, other: InfiniteGrid[_T]) -> bool:
         return self._items == other._items
+    
+    def __len__(self) -> int:
+        return len(self._items)
 
     def __str__(self) -> str:
         if self.dimension() == 0:
@@ -164,21 +167,21 @@ class InfiniteGrid(Generic[_T]):
         if self.dimension() < 2:
             return 0
 
-        return max(x[1] for x in self._items.keys()) + 1
+        return max(x[1] for x in self._items.keys()) - min(x[1] for x in self._items.keys()) + 1
 
     def depth(self) -> int:
         """Returns the depth of the grid (third position argument)."""
         if self.dimension() < 3:
             return 0
 
-        return max(x[2] for x in self._items.keys()) + 1
+        return max(x[2] for x in self._items.keys()) - min(x[2] for x in self._items.keys()) + 1
 
     def length(self, dim: int) -> int:
         """Returns the length of the grid along the given dimension."""
         if self.dimension() < dim + 1:
             return 0
 
-        return max(x[dim] for x in self._items.keys()) + 1
+        return max(x[dim] for x in self._items.keys()) - min(x[dim] for x in self._items.keys()) + 1
 
     def positions(self) -> Iterator[tuple[int, ...]]:
         """Returns an iterator over all positions in the grid."""
