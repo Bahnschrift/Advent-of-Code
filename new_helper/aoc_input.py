@@ -1,4 +1,4 @@
-from typing import Callable, TypeVar
+from typing import Callable, TypeVar, Union
 
 import requests
 from rich import print
@@ -135,7 +135,7 @@ def _ensure_input_file(day: int, year: int, path: str) -> None:
         _download_input(day, year, path)
 
 
-def get_aoc_input(day: int, year: int, path: str | None = None) -> Input:
+def get_aoc_input(day: int, year: int, path: Union[str, None] = None) -> Input:
     """Returns the Advent of Code input for the given day and year.
     If the input file doesn't exist, it is downloaded.
 
