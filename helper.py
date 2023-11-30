@@ -44,7 +44,7 @@ DIRECTIONS = {
     "L": (-1, 0),
 }
 
-_CURRENT_YEAR = 2022
+_CURRENT_YEAR = 2023
 _COOKIE_PATH = "cookie.txt"
 
 
