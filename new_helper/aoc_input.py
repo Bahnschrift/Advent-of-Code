@@ -1,6 +1,7 @@
 from typing import Callable, TypeVar, Union
 
 import requests
+import io
 from rich import print
 
 from .grid import Grid
@@ -115,7 +116,7 @@ def _download_input(day: int, year: int, path: str) -> None:
     else:
         print(f"[bold green]Successfully downloaded input for day {day}")
 
-    with open(path, "w+") as f:
+    with io.open(path, "w+", newline="\n") as f:
         f.write(text)
 
 
