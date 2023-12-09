@@ -5,7 +5,7 @@
 *.exe
 
 .vscode/
-venv*/
+*venv*/
 bin/
 obj/
 cookie.txt
