@@ -508,6 +508,14 @@ class Grid(Generic[_T]):
         """Returns whether the given item is in the grid."""
         return any(value == v for v in self.values())
 
+    def rows(self) -> list[list[_T]]:
+        """Returns a list of all rows in the grid."""
+        return self._grid
+
+    def cols(self) -> list[list[_T]]:
+        """Returns a list of all columns in the grid."""
+        return [self[:, y] for y in range(self.height)]
+
     def positions(self) -> Iterator[tuple[int, int]]:
         """Returns an iterator over all positions in the grid, left to right, then top to bottom."""
         for y in range(self.height):
