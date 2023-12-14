@@ -729,6 +729,14 @@ class Grid(Generic[_T]):
 
         raise ValueError(f"{value} not in grid.")
 
+    def find(self, value: _T) -> tuple[int, int]:
+        """Alias for Grid.get_pos()"""
+        return self.get_pos(value)
+
+    def find_all(self, value: _T) -> list[tuple[int, int]]:
+        """Returns a list of all positions of the given value."""
+        return [pos for pos, v in self.items() if v == value]
+
     def replace(self, old: _T, new: _T, count: int = -1) -> None:
         """Replaces all occurrences of the given value with the new value.
         If a count is given, only that many occurrences will be replaced."""
