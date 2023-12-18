@@ -4,3 +4,4 @@ from .constants import *
 from .grid import *
 from .infinite_grid import *
 from .utils import *
+from .polygon import *
