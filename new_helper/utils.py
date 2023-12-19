@@ -13,6 +13,7 @@ if TYPE_CHECKING:
 
 
 _T = TypeVar("_T")
+_T2 = TypeVar("_T2")
 
 
 def digits(s: str) -> list[int]:
@@ -95,6 +96,10 @@ def minmax(l: Iterable[_C]) -> tuple:
     :param l: the iterable to get the minimum and maximum values of
     :return: the minimum and maximum values in the given iterable"""
     return min(l), max(l)
+
+
+def invert_dict(d: dict[_T, _T2]) -> dict[_T2, _T]:
+    return {v: k for k, v in d.items()}
 
 
 def _print_part(n: int, ans: Any) -> None:
