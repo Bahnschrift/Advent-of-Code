@@ -556,32 +556,84 @@ class Grid(Generic[_T]):
         """Returns the column at the given x position."""
         return self[x, :]
 
-    def pretty(self) -> str:
-        """Returns a pretty string representation of the grid in the following format:
-        ```text
-           | 0  1  2  3  4
-        ---+----------------
-         0 |  1  2  3  4  5
-         1 |  6  7  8  9 10
-         3 | 11 12 13 14 15
-         4 | 16 17 18 19 20
-        ```
-        """
+    def pretty(self, sep_col: str = " ", sep_row: str = "", align_left: bool = False, no_axes: bool = False) -> str:
+        s = ""
+
+        x_axis_height = len(str(self.width - 1))
         y_axis_width = len(str(self.height - 1))
-        s = " " * (y_axis_width + 2) + "| "
+        cell_width = max(len(str(v)) for v in self.values())
 
-        column_widths = [max(*(len(str(i)) for i in self.col(x)), len(str(x))) for x in range(self.width)]
-        s += " ".join(f"{i:>{width}}" for i, width in enumerate(column_widths))
-        s += "\n"
+        normalised_xs = [str(x).rjust(x_axis_height) for x in range(self.width)]
+        normalised_ys = [str(y).rjust(y_axis_width) for y in range(self.height)]
 
-        s += "-" * (y_axis_width + 2) + "+-" + "-".join("-" * width for width in column_widths) + "\n"
+        if not no_axes:
+            for i in range(x_axis_height):
+                s += " " * (y_axis_width + 2)
+                s += "| "
+                for j, x in enumerate(normalised_xs):
+                    if j > 0:
+                        s += " " * len(sep_col)
 
-        for y in range(self.height):
-            s += f" {y:>{y_axis_width}} | "
-            s += " ".join(f"{i:>{width}}" for i, width in zip(self.row(y), column_widths))
+                    if align_left:
+                        s += x[i] + " " * (cell_width - 1)
+                    else:
+                        s += " " * (cell_width - 1) + x[i]
+
+                s += "\n"
+
+            s += "-" * (y_axis_width + 2) + "+-" + "-" * (cell_width + len(sep_col)) * self.width + "\n"
+
+        for i in range(self.height):
+            if i > 0:
+                for j in range(len(sep_row)):
+                    if not no_axes:
+                        s += " " * (y_axis_width + 2)
+                        s += "| "
+                    s += sep_row[j] * ((cell_width + len(sep_col)) * self.width - 1)
+                    s += "\n"
+            
+            if not no_axes:
+                s += " " + normalised_ys[i] + " | "
+
+            for j in range(self.width):
+                if j > 0:
+                    s += sep_col
+
+                if align_left:
+                    s += str(self[j, i]).ljust(cell_width)
+                else:
+                    s += str(self[j, i]).rjust(cell_width)
+            
             s += "\n"
 
         return s
+
+    # def pretty(self) -> str:
+    #     """Returns a pretty string representation of the grid in the following format:
+    #     ```text
+    #        | 0  1  2  3  4
+    #     ---+----------------
+    #      0 |  1  2  3  4  5
+    #      1 |  6  7  8  9 10
+    #      3 | 11 12 13 14 15
+    #      4 | 16 17 18 19 20
+    #     ```
+    #     """
+    #     y_axis_width = len(str(self.height - 1))
+    #     s = " " * (y_axis_width + 2) + "| "
+
+    #     column_widths = [max(*(len(str(i)) for i in self.col(x)), len(str(x))) for x in range(self.width)]
+    #     s += " ".join(f"{i:>{width}}" for i, width in enumerate(column_widths))
+    #     s += "\n"
+
+    #     s += "-" * (y_axis_width + 2) + "+-" + "-".join("-" * width for width in column_widths) + "\n"
+
+    #     for y in range(self.height):
+    #         s += f" {y:>{y_axis_width}} | "
+    #         s += " ".join(f"{i:>{width}}" for i, width in zip(self.row(y), column_widths))
+    #         s += "\n"
+
+    #     return s
 
     def in_bounds(self, x: int, y: int) -> bool:
         """Returns whether the given position is in the grid."""
