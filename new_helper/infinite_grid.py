@@ -311,7 +311,7 @@ class InfiniteGrid(Generic[_T]):
 
     def transposed(self) -> InfiniteGrid[_T]:
         """Returns a transposed copy of the grid."""
-        return InfiniteGrid(((pos[::-1], v) for pos, v in self.items()))
+        return InfiniteGrid(((pos[::-1], v) for pos, v in self.items()), self._items.default_factory)
 
     def transpose(self) -> None:
         """Transposes the grid in place."""
