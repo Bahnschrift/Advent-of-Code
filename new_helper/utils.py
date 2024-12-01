@@ -102,6 +102,11 @@ def invert_dict(d: dict[_T, _T2]) -> dict[_T2, _T]:
     return {v: k for k, v in d.items()}
 
 
+def sort(a, *args, **kwargs):
+    """Sometimes I'm silly and I forget that I'm meant to .sort() a list."""
+    return a.sort(*args, **kwargs)
+
+
 def _print_part(n: int, ans: Any) -> None:
     print(f"[bold green]Part {n}[/]: {ans}")
 
