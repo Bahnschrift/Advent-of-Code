@@ -11,3 +11,7 @@ obj/
 cookie.txt
 __pycache__/
 */inputs/*
+
+build/
+*.egg-info/
+requirements.txt

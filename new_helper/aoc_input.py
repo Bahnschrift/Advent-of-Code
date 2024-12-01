@@ -9,7 +9,7 @@ from .grid import Grid
 _COOKIE_PATH = "cookie.txt"
 _USER_AGENT = "Bahnschrift's Advent of Code Helper - https://github.com/Bahnschrift/Advent-of-Code"
 _INPUT_URL = "https://adventofcode.com/{year}/day/{day}/input"
-_INPUT_PATH = "./{year}/inputs/day{day:02d}.txt"
+_INPUT_PATH = "../inputs/day{day:02d}.txt"
 
 
 ########################################################################################################################

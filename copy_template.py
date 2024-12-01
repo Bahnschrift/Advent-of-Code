@@ -6,7 +6,7 @@ day = int(argv[1])
 if len(argv) > 2:
     year = int(argv[2])
 else:
-    year = 2023
+    year = 2024
 
 chdir(path.dirname(__file__))
 
