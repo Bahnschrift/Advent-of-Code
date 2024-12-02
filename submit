@@ -1,0 +1,47 @@
+#!/usr/bin/env python3
+
+import jupyter_client
+import re
+from sys import argv
+import new_helper
+
+
+def escape_ansi(line: str) -> str:
+    ansi_escape = re.compile(r"(?:\x1B[@-_]|[\x80-\x9F])[0-?]*[ -/]*[@-~]")
+    return ansi_escape.sub("", line)
+
+
+class Runner:
+    def __init__(self):
+        with open("./2024/python/kernel", "r") as f:
+            kernel_connection_file = f.read().strip()
+
+        self.client = jupyter_client.BlockingKernelClient(connection_file=kernel_connection_file)
+        self.client.load_connection_file()
+        self.client.start_channels()
+
+    def execute(self, code: str) -> str:
+        msg_id = self.client.execute(code)
+        while True:
+            msg = self.client.get_iopub_msg(timeout=2)
+            if msg["parent_header"].get("msg_id") == msg_id:
+                if msg["msg_type"] == "execute_result":
+                    return msg["content"]["data"]["text/plain"]
+                elif msg["msg_type"] == "error":
+                    return msg["content"]
+
+    def get_var(self, var: str) -> str:
+        return escape_ansi(self.execute(var))
+
+
+if __name__ == "__main__":
+    if len(argv) != 2 or not re.fullmatch(r"[12]", argv[1]):
+        print("Usage: ./submit (1 | 2)")
+        exit(1)
+
+    p = int(argv[1])
+    runner = Runner()
+    if p == 1:
+        new_helper.submit_part_1(runner.get_var("part_1"), int(runner.get_var("DAY")), int(runner.get_var("YEAR")))
+    else:
+        new_helper.submit_part_2(runner.get_var("part_2"), int(runner.get_var("DAY")), int(runner.get_var("YEAR")))
