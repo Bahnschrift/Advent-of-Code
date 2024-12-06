@@ -514,7 +514,7 @@ class Grid(Generic[_T]):
 
     def cols(self) -> list[list[_T]]:
         """Returns a list of all columns in the grid."""
-        return [self[:, y] for y in range(self.height)]
+        return [self[x, :] for x in range(self.width)]
 
     def positions(self) -> Iterator[tuple[int, int]]:
         """Returns an iterator over all positions in the grid, left to right, then top to bottom."""

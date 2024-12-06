@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 from os import chdir, path
 from shutil import copy
 from sys import argv
