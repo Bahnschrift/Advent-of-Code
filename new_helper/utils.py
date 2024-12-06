@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import math
 import re
-from typing import TYPE_CHECKING, Any, Iterable, TypeVar
+from typing import TYPE_CHECKING, Any, Iterable, TypeVar, overload
 
 from rich import print
 
@@ -105,6 +105,44 @@ def invert_dict(d: dict[_T, _T2]) -> dict[_T2, _T]:
 def sort(a, *args, **kwargs):
     """Sometimes I'm silly and I forget that I'm meant to .sort() a list."""
     return a.sort(*args, **kwargs)
+
+
+@overload
+def turn_right(d: tuple[int, int]) -> tuple[int, int]: ...
+
+
+@overload
+def turn_right(d: int, dy: int) -> tuple[int, int]: ...
+
+
+def turn_right(d: int | tuple[int, int], dy: int | None = None) -> tuple[int, int]:
+    if isinstance(d, tuple):
+        dx, dy = d
+    else:
+        dx = d
+
+    return dy * -1, dx  # type: ignore
+
+
+@overload
+def turn_left(d: tuple[int, int]) -> tuple[int, int]: ...
+
+
+@overload
+def turn_left(d: int, dy: int) -> tuple[int, int]: ...
+
+
+def turn_left(d: int | tuple[int, int], dy: int | None = None) -> tuple[int, int]:
+    if isinstance(d, tuple):
+        dx, dy = d
+    else:
+        dx = d
+
+    return dy, dx * -1  # type: ignore
+
+
+clockwise = cw = tr = turn_right
+counterclocwise = cclockwise = ccw = tl = turn_left
 
 
 def _print_part(n: int, ans: Any) -> None:
