@@ -35,6 +35,10 @@ class Input(str):
         """Parses the input into an integer."""
         return int(self)
 
+    def parse_digits(self) -> list[int]:
+        """Parses the input as a contiguous sequence of individual digits."""
+        return list(map(int , self))
+
     def parse_lines(self) -> list[str]:
         """Parses the input into a list of lines."""
         return self.split("\n")
