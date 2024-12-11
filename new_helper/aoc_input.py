@@ -5,6 +5,7 @@ import io
 from rich import print
 
 from .grid import Grid
+from .utils import ints
 
 _COOKIE_PATH = "cookie.txt"
 _USER_AGENT = "Bahnschrift's Advent of Code Helper - https://github.com/Bahnschrift/Advent-of-Code"
@@ -37,7 +38,7 @@ class Input(str):
 
     def parse_digits(self) -> list[int]:
         """Parses the input as a contiguous sequence of individual digits."""
-        return list(map(int , self))
+        return list(map(int, self))
 
     def parse_lines(self) -> list[str]:
         """Parses the input into a list of lines."""
@@ -45,6 +46,10 @@ class Input(str):
 
     def parse_ints(self) -> list[int]:
         """Parses the input into a list of integers."""
+        return ints(self)
+
+    def parse_int_lines(self) -> list[int]:
+        """Parses the input into a list of integers, with one integer per line."""
         return [int(line) for line in self.parse_lines()]
 
     def parse_groups(self) -> list[list[str]]:
