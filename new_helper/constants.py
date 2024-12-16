@@ -40,6 +40,10 @@ DIRECTIONS: dict[str, tuple[int, int]] = {
     "DOWN": (0, 1),
     "RIGHT": (1, 0),
     "LEFT": (-1, 0),
+    "^": (0, -1),
+    "v": (0, 1),
+    ">": (1, 0),
+    "<": (-1, 0),
 }
 
 DIRS = DIRECTIONS
